@@ -168,7 +168,7 @@ async function fetchPokemons() {
             currentTurn = "enemy";
             isStartBattleMessage = true;
             enqueueLog(`${rightPokemon.name} is faster and starts!`);
-            setTimeout(enemyTurn, 2000);
+            setTimeout(enemyTurn, 2750);
         } else {
             currentTurn = Math.random() < 0.5 ? "player" : "enemy";
             enqueueLog(
@@ -176,7 +176,7 @@ async function fetchPokemons() {
                 } starts!`,
             );
             if (currentTurn === "enemy") {
-                setTimeout(enemyTurn, 2000);
+                setTimeout(enemyTurn, 2750);
             }
         }
 
@@ -468,7 +468,7 @@ function endPlayerTurn() {
     currentTurn = "enemy";
     updateTurnIndicator();
     updatePlayerButtonsState();
-    setTimeout(enemyTurn, 2000);
+    setTimeout(enemyTurn, 2750);
 }
 
 function endEnemyTurn() {
@@ -804,14 +804,14 @@ function showNextLog() {
             element.textContent = "";
             element.classList.remove("show");
             showNextLog();
-        }, 1200);
+        }, 1500);
     } else {
         setTimeout(() => {
             element.textContent = "";
             element.classList.remove("show");
             showNextLog();
             isStartBattleMessage = false;
-        }, 2000);
+        }, 2750);
     }
 }
 
