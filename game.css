@@ -490,7 +490,7 @@ body {
 }
 
 .log-recovery-center {
-    margin-top: 2px;
+    margin-top: .75rem;
     text-align: center;
 }
 
@@ -580,8 +580,8 @@ body {
     }
 
     .battle-log {
-        top: 5%;
-        width: 15rem;
+        top: 2%;
+        width: 16rem;
     }
 
     .hp-bar-inner {
