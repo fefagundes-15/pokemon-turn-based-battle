@@ -1,29 +1,63 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8" />
-    <title>Pokémon Retro – Start</title>
+    <title>Pokémon Battle – Start</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="start.css" />
-    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
 </head>
 
 <body>
     <div class="scanlines"></div>
 
-    <div class="screen-glow"></div>
+    <div class="console-shell">
+        <header class="console-top">
+            <div class="console-top-left">
+                <span class="power-led"></span>
+                <span class="console-label">POKéMON BATTLE</span>
+            </div>
+            <div class="console-top-right">
+                <span class="battery-text">BATTERY</span>
+                <span class="battery-icon">
+                    <span class="battery-fill"></span>
+                </span>
+            </div>
+        </header>
 
-    <div class="frame">
-        <div class="frame-inner">
-            <div class="logo">
-                <span class="logo-top">Pokémon</span>
-                <span class="logo-bottom">Game</span>
+        <main class="console-screen">
+            <div class="screen-bg">
+                <div class="layer sky"></div>
+                <div class="layer mountains"></div>
+                <div class="layer grass"></div>
             </div>
 
-            <a href="game.html" class="start-button">
-                <span class="start-text">Start Game</span>
-            </a>
-        </div>
+            <div class="screen-content">
+                <div class="logo">
+                    <span class="logo-main">POKéMON</span>
+                    <span class="logo-sub">RETRO BATTLE</span>
+                </div>
+
+                <a href="game.html" class="start-btn">
+                    <span class="start-btn-border"></span>
+                    <span class="start-btn-inner">
+                        <span class="start-btn-shine"></span>
+                        <span class="start-btn-text">Start Game</span>
+                    </span>
+                </a>
+            </div>
+        </main>
+
+        <footer class="console-bottom">
+            <div class="bottom-left">
+                <div class="btn-circle btn-a">A</div>
+                <div class="btn-circle btn-b">B</div>
+            </div>
+            <div class="bottom-right">
+                <div class="btn-oval">SELECT</div>
+                <div class="btn-oval">START</div>
+            </div>
+        </footer>
     </div>
 </body>
 

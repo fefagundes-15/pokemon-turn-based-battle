@@ -1,16 +1,10 @@
-/* Fonte pixelada básica (fallback se não houver fonte externa) */
-@font-face {
-    font-family: 'RetroPixel';
-    src: local('Courier New'), local('Lucida Console');
-}
-
-/* RESET BÁSICO */
+/* RESET */
 *,
 *::before,
 *::after {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
 html,
@@ -19,350 +13,453 @@ body {
 }
 
 body {
-    font-family: 'RetroPixel', monospace;
-    background: radial-gradient(circle at top, #12213a 0, #02030c 40%, #000000 100%);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    background: #020308;
     color: #f5f5f5;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
-    position: relative;
 }
 
-/* EFEITO DE SCANLINES (CRT ANTIGO) */
+/* Scanlines for CRT look */
 .scanlines {
     pointer-events: none;
     position: fixed;
     inset: 0;
-    background: repeating-linear-gradient(to bottom,
-            rgba(0, 0, 0, 0.2) 0px,
-            rgba(0, 0, 0, 0.2) 2px,
-            rgba(0, 0, 0, 0) 3px,
-            rgba(0, 0, 0, 0) 4px);
+    background-image: linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.12) 1px,
+            transparent 1px);
+    background-size: 100% 2px;
     mix-blend-mode: soft-light;
-    opacity: 0.7;
-    z-index: 3;
-    animation: scan-flicker 6s infinite;
+    opacity: 0.4;
+    z-index: 5;
 }
 
-@keyframes scan-flicker {
-
-    0%,
-    100% {
-        opacity: 0.6;
-    }
-
-    50% {
-        opacity: 0.85;
-    }
-}
-
-/* BRILHO SUAVE EM VOLTA DA TELA */
-.screen-glow {
-    position: absolute;
-    width: 140vmin;
-    height: 140vmin;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(0, 255, 136, 0.14), transparent 60%);
-    filter: blur(3vmin);
-    z-index: 0;
-}
-
-/* MOLDURA DO “GAME BOY / TELA” */
-.frame {
+/* CONSOLE SHELL – centered, responsive, no scroll on large screens */
+.console-shell {
     position: relative;
-    width: min(420px, 90vw);
-    height: min(280px, 60vh);
+    width: min(100vw, 960px);
+    height: min(100vh, 600px);
+    padding: clamp(10px, 2vw, 18px);
     border-radius: 24px;
-    background: linear-gradient(135deg, #1d2336, #060a17);
-    padding: 10px;
+    background: radial-gradient(circle at 50% 0, #2a314d, #04040d 70%);
     box-shadow:
-        0 0 0 2px rgba(255, 255, 255, 0.06),
-        0 20px 50px rgba(0, 0, 0, 0.85),
-        0 0 40px rgba(0, 255, 170, 0.1);
+        0 0 0 1px rgba(17, 20, 40, 0.9),
+        0 24px 40px rgba(0, 0, 0, 0.95);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(8px, 1.5vh, 14px);
+    z-index: 1;
+}
+
+/* TOP BAR */
+.console-top {
     display: flex;
     align-items: center;
-    justify-content: center;
-    z-index: 1;
+    justify-content: space-between;
+    padding: 6px 10px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #161a2b, #050713);
+    box-shadow:
+        inset 0 0 0 1px rgba(39, 45, 82, 0.85),
+        0 10px 18px rgba(0, 0, 0, 0.8);
+    font-size: 0.75rem;
+}
+
+.console-top-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.power-led {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: #3fff93;
+    box-shadow: 0 0 8px rgba(63, 255, 147, 0.9);
+}
+
+.console-label {
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #dde6ff;
+}
+
+.console-top-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #9aa4cf;
+}
+
+.battery-text {
+    letter-spacing: 0.15em;
+    font-size: 0.7rem;
+}
+
+.battery-icon {
+    position: relative;
+    width: 22px;
+    height: 10px;
+    border-radius: 3px;
+    border: 1px solid #9aa4cf;
     overflow: hidden;
 }
 
-/* BORDAS COM PSEUDO-ELEMENTOS (DETALHES DE CONSOLE ANTIGO) */
-.frame::before,
-.frame::after {
-    content: "";
+.battery-fill {
     position: absolute;
-    inset: 10px;
-    border-radius: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    pointer-events: none;
+    inset: 2px 3px 2px 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #4cff9a, #cfffd5);
 }
 
-.frame::before {
-    border-top-color: rgba(255, 255, 255, 0.16);
-    border-left-color: rgba(255, 255, 255, 0.10);
-    border-right-color: rgba(0, 0, 0, 0.4);
-    border-bottom-color: rgba(0, 0, 0, 0.7);
-}
-
-.frame::after {
-    inset: 18px;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.8);
-    box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.75);
-}
-
-/* INTERIOR DA TELA (FUNDO “GAME BOY COLOR”) */
-.frame-inner {
+/* MAIN SCREEN */
+.console-screen {
     position: relative;
-    z-index: 2;
-    width: 100%;
-    height: 100%;
-    border-radius: 16px;
-    background:
-        radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.12), transparent 40%),
-        radial-gradient(circle at 80% 90%, rgba(0, 255, 204, 0.18), transparent 55%),
-        repeating-linear-gradient(-45deg,
-            rgba(16, 32, 64, 0.90),
-            rgba(16, 32, 64, 0.90) 10px,
-            rgba(11, 21, 46, 0.98) 10px,
-            rgba(11, 21, 46, 0.98) 20px);
+    flex: 1 1 auto;
+    border-radius: 18px;
+    padding: clamp(8px, 1.5vw, 12px);
+    background: #03050e;
+    box-shadow:
+        inset 0 0 0 1px rgba(33, 42, 77, 0.9),
+        0 16px 22px rgba(0, 0, 0, 0.85);
+    overflow: hidden;
+}
+
+/* Background layers: sky, mountains, grass */
+.screen-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.layer {
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+/* Sky */
+.layer.sky {
+    top: 0;
+    bottom: 40%;
+    background: linear-gradient(#87b0ff, #5575d9, #1b2144);
+}
+
+/* Mountains */
+.layer.mountains {
+    bottom: 30%;
+    height: 40%;
+    background: linear-gradient(to top,
+            #1b2144 0,
+            #27356c 25%,
+            #3b4c8c 50%,
+            #4e66a8 75%,
+            #627fbe 100%);
+    clip-path: polygon(0% 100%,
+            5% 70%,
+            14% 78%,
+            22% 55%,
+            30% 63%,
+            38% 42%,
+            50% 60%,
+            60% 37%,
+            70% 55%,
+            82% 40%,
+            91% 58%,
+            100% 35%,
+            100% 100%);
+}
+
+/* Grass */
+.layer.grass {
+    bottom: 0;
+    height: 34%;
+    background: linear-gradient(#1c5025 0, #0f3518 40%, #071909 100%);
+}
+
+/* Foreground content */
+.screen-content {
+    position: relative;
+    z-index: 1;
+    inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 32px;
-    padding: 24px;
+    gap: clamp(20px, 4vh, 28px);
+    padding: clamp(12px, 3vw, 24px);
+    text-align: center;
 }
 
-/* EFEITO DE GRAIN / TEXTURA SUAVE */
-.frame-inner::before {
-    content: "";
+/* Logo */
+.logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    user-select: none;
+}
+
+.logo-main {
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: clamp(2rem, 6vw, 3rem);
+    color: #ffcc03;
+    text-shadow:
+        0 3px 0 #27406f,
+        0 0 18px rgba(255, 255, 255, 0.7);
+}
+
+.logo-sub {
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
+    color: #f5f5f5;
+    text-shadow: 0 2px 0 #27406f;
+}
+
+/* START BUTTON – center, single action */
+.start-btn {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    cursor: pointer;
+    transform-origin: center;
+    transition:
+        transform 0.18s ease-out,
+        box-shadow 0.18s ease-out;
+}
+
+/* Outer glow ring */
+.start-btn-border {
     position: absolute;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.13'/%3E%3C/svg%3E");
-    mix-blend-mode: soft-light;
-    pointer-events: none;
-}
-
-/* “LOGO” RETRÔ */
-.logo {
-    position: relative;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 0.24em;
-    font-size: 0.75rem;
-    color: #fefefe;
-    text-shadow:
-        0 0 4px rgba(0, 0, 0, 0.8),
-        0 0 16px rgba(0, 255, 136, 0.4);
-    animation: logo-pulse 2.8s ease-in-out infinite;
-}
-
-.logo-top {
-    display: block;
-    font-size: 1.5rem;
-    color: #fedf7b;
-    letter-spacing: 0.36em;
-}
-
-.logo-bottom {
-    display: block;
-    font-size: 1.8rem;
-    color: #52ffca;
-    letter-spacing: 0.26em;
-}
-
-@keyframes logo-pulse {
-
-    0%,
-    100% {
-        text-shadow:
-            0 0 4px rgba(0, 0, 0, 0.8),
-            0 0 12px rgba(0, 255, 136, 0.3);
-    }
-
-    50% {
-        text-shadow:
-            0 0 6px rgba(0, 0, 0, 1),
-            0 0 22px rgba(0, 255, 136, 0.7);
-    }
-}
-
-/* BOTÃO START GAME */
-.start-button {
-    position: relative;
-    padding: 14px 72px;
     border-radius: 999px;
-    border: none;
-    cursor: pointer;
-    background: linear-gradient(145deg, #ffdf72, #ffb347);
-    color: #201408;
-    text-transform: uppercase;
-    letter-spacing: 0.26em;
-    font-size: 0.76rem;
-    font-weight: 700;
-    outline: none;
-    box-shadow:
-        0 6px 0 #a76718,
-        0 12px 25px rgba(0, 0, 0, 0.7),
-        0 0 30px rgba(255, 215, 128, 0.4);
-    transform: translateY(0);
-    transition:
-        transform 0.16s ease-out,
-        box-shadow 0.16s ease-out,
-        filter 0.16s ease-out;
-    overflow: hidden;
-}
-
-/* BORDAS E BRILHOS DO BOTÃO COM PSEUDO-ELEMENTOS */
-.start-button::before,
-.start-button::after {
-    content: "";
-    position: absolute;
-    inset: 2px;
-    border-radius: 999px;
-    pointer-events: none;
-}
-
-.start-button::before {
-    border-top: 1px solid rgba(255, 255, 255, 0.8);
-    border-bottom: 1px solid rgba(189, 102, 34, 0.7);
+    background: linear-gradient(135deg, #ffe782, #ff7a15);
+    filter: blur(0.45px);
     opacity: 0.9;
 }
 
-.start-button::after {
-    inset: auto;
-    top: 0;
-    left: -30%;
-    right: -30%;
-    height: 60%;
-    border-radius: 999px;
-    background: linear-gradient(to bottom,
-            rgba(255, 255, 255, 0.65),
-            rgba(255, 255, 255, 0.05));
-    opacity: 0.7;
-}
-
-/* EFEITO DE “ENERGIA” PASSANDO PELO BOTÃO */
-.start-button .start-text {
+/* Inner button base */
+.start-btn-inner {
     position: relative;
-    font-size: 1rem;
-    z-index: 1;
-    display: inline-block;
-    background: linear-gradient(90deg, #603911, #5b3410, #603911);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: #000;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+    min-width: min(260px, 80vw);
+    height: clamp(60px, 9vh, 76px);
+    padding-inline: 32px;
+    border-radius: 999px;
+    background:
+        radial-gradient(circle at 10% 0, rgba(255, 255, 255, 0.2), transparent 50%),
+        linear-gradient(135deg, #ffcc03, #ff7e11);
+    box-shadow:
+        0 12px 24px rgba(0, 0, 0, 0.8),
+        0 0 22px rgba(255, 203, 76, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
-.start-button::marker {
-    content: none;
-}
-
-/* BARRA DE ENERGIA ANIMADA */
-.start-button::before {
-    position: absolute;
-}
-
-.start-button::after {
-    position: absolute;
-}
-
-.start-button::after {
+/* Inner dark band for retro feel */
+.start-btn-inner::before {
     content: "";
-    top: 0;
-    left: -150%;
-    right: -150%;
-    height: 150%;
-    background: linear-gradient(120deg,
-            transparent 0%,
+    position: absolute;
+    inset: 3px;
+    border-radius: inherit;
+    background: linear-gradient(180deg, #2b324a, #151929);
+    opacity: 0.55;
+}
+
+/* Moving shine */
+.start-btn-shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg,
+            transparent 0,
             rgba(255, 255, 255, 0.85) 40%,
-            rgba(255, 255, 255, 0.0) 60%,
+            rgba(255, 255, 255, 0) 60%,
             transparent 100%);
-    opacity: 0.0;
     mix-blend-mode: screen;
-    transform: translateX(-30%);
-    animation: button-shine 3.5s ease-in-out infinite;
+    transform: translateX(-120%);
+    opacity: 0;
+    pointer-events: none;
 }
 
-@keyframes button-shine {
+/* Button text */
+.start-btn-text {
+    position: relative;
+    z-index: 1;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    font-size: clamp(1rem, 3.4vw, 1.25rem);
+    color: #fffef4;
+    text-shadow:
+        0 2px 0 rgba(0, 0, 0, 0.8),
+        0 0 10px rgba(0, 0, 0, 0.9);
+}
+
+/* Hover / focus / active */
+.start-btn:hover,
+.start-btn:focus-visible {
+    transform: translateY(-3px) scale(1.03);
+}
+
+.start-btn:hover .start-btn-inner,
+.start-btn:focus-visible .start-btn-inner {
+    box-shadow:
+        0 14px 28px rgba(0, 0, 0, 0.9),
+        0 0 28px rgba(255, 224, 135, 0.9);
+    background:
+        radial-gradient(circle at 10% 0, rgba(255, 255, 255, 0.25), transparent 50%),
+        linear-gradient(135deg, #ffd44f, #ff9731);
+}
+
+.start-btn:hover .start-btn-shine,
+.start-btn:focus-visible .start-btn-shine {
+    animation: shine-sweep 0.9s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+.start-btn:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+.start-btn:active .start-btn-inner {
+    box-shadow:
+        0 8px 16px rgba(0, 0, 0, 0.9),
+        0 0 18px rgba(255, 203, 76, 0.75);
+}
+
+/* Keyboard focus outline */
+.start-btn:focus-visible {
+    outline: 2px solid #ffe678;
+    outline-offset: 6px;
+}
+
+/* Shine animation */
+@keyframes shine-sweep {
     0% {
+        transform: translateX(-120%);
         opacity: 0;
-        transform: translateX(-60%);
     }
 
-    15% {
-        opacity: 1;
+    10% {
+        opacity: 0.9;
     }
 
-    45% {
-        opacity: 0;
-        transform: translateX(60%);
+    60% {
+        opacity: 0.7;
     }
 
     100% {
+        transform: translateX(120%);
         opacity: 0;
-        transform: translateX(60%);
     }
 }
 
-/* HOVER E ACTIVE */
-.start-button:hover {
-    filter: brightness(1.05);
-    transform: translateY(-2px) scale(1.02);
+/* BOTTOM BAR – console buttons */
+.console-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 4px;
+    font-size: 0.72rem;
+    color: #8b92b8;
+}
+
+.bottom-left {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.bottom-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    color: #fff6f0;
+    font-weight: 700;
     box-shadow:
-        0 8px 0 #8f5813,
-        0 16px 32px rgba(0, 0, 0, 0.85),
-        0 0 45px rgba(255, 243, 191, 0.7);
+        0 2px 0 rgba(0, 0, 0, 0.85),
+        0 0 0 2px rgba(46, 16, 16, 0.9);
+    font-size: 0.78rem;
 }
 
-.start-button:active {
-    transform: translateY(2px) scale(0.99);
+.btn-a {
+    background: radial-gradient(circle at 30% 25%, #ff5d5d, #a42121);
+}
+
+.btn-b {
+    background: radial-gradient(circle at 30% 25%, #ffc659, #b57c1b);
     box-shadow:
-        0 3px 0 #6c3c0e,
-        0 6px 18px rgba(0, 0, 0, 0.9);
+        0 2px 0 rgba(0, 0, 0, 0.85),
+        0 0 0 2px rgba(75, 42, 5, 0.9);
 }
 
-/* PEQUENO “TREMER” SUAVE DA TELA (COMO HARDWARE ANTIGO) */
-.frame-inner {
-    animation: subtle-shake 7s ease-in-out infinite;
+.btn-oval {
+    padding: 3px 12px;
+    border-radius: 999px;
+    background: linear-gradient(#2c314f, #161a31);
+    box-shadow:
+        0 2px 0 rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(70, 78, 130, 0.9);
+    letter-spacing: 0.18em;
 }
 
-@keyframes subtle-shake {
-
-    0%,
-    100% {
-        transform: translate(0, 0);
+/* RESPONSIVE – keep everything visible without scroll when possible */
+@media (max-width: 768px) {
+    .console-shell {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        padding: 10px;
     }
 
-    25% {
-        transform: translate(0, 0.4px);
+    .console-top {
+        border-radius: 10px;
+        padding-inline: 8px;
     }
 
-    50% {
-        transform: translate(0.3px, -0.4px);
+    .console-screen {
+        border-radius: 10px;
     }
 
-    75% {
-        transform: translate(-0.4px, 0.2px);
+    .console-bottom {
+        padding-top: 6px;
+    }
+
+    .btn-circle {
+        width: 26px;
+        height: 26px;
+        font-size: 0.7rem;
+    }
+
+    .btn-oval {
+        padding: 3px 10px;
     }
 }
 
-/* RESPONSIVIDADE SIMPLES */
-@media (max-width: 480px) {
-    .frame {
-        width: 92vw;
-        height: 54vh;
+/* In very short viewports, allow vertical scroll but keep layout clean */
+@media (max-height: 500px) {
+    body {
+        overflow-y: auto;
     }
 
-    .start-button {
-        padding: 12px 54px;
-        font-size: 0.72rem;
-    }
-
-    .logo-bottom {
-        font-size: 0.9rem;
+    .console-shell {
+        height: auto;
+        min-height: 100vh;
     }
 }
