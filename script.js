@@ -270,6 +270,17 @@ function setPokemon(pokemon, index) {
         defBarElement.style.width = `${defensePercentage}%`;
     }
 
+    // Attack & Speed lines
+    const atkElement = document.getElementById(`atk${index}`);
+    const spdElement = document.getElementById(`spd${index}`);
+
+    if (atkElement) {
+        atkElement.textContent = pokemon.attack;
+    }
+    if (spdElement) {
+        spdElement.textContent = pokemon.speed;
+    }
+
     if (imageElement) {
         imageElement.src = pokemon.sprite;
         imageElement.alt = `Image of ${pokemon.name}`;
@@ -827,6 +838,19 @@ function visualFx(id, property, newValue, originalValue, duration = 2000) {
         element.style[property] = previous;
     }, duration);
 }
+
+// =========================
+// Mobile viewport height fix (URL bar)
+// =========================
+
+function updateViewportHeightVariable() {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
+
+updateViewportHeightVariable();
+window.addEventListener("resize", updateViewportHeightVariable);
+window.addEventListener("orientationchange", updateViewportHeightVariable);
 
 // =========================
 // Init

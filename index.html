@@ -6,6 +6,7 @@
     <title>Pokémon Battle – Start</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="start.css" />
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 </head>
 
 <body>
@@ -59,6 +60,21 @@
             </div>
         </footer>
     </div>
+
+    <script>
+        // Fix for mobile URL bar affecting viewport height
+        function updateViewportHeightVariable() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+
+        // Set on load
+        updateViewportHeightVariable();
+
+        // Update on resize / orientation changes
+        window.addEventListener('resize', updateViewportHeightVariable);
+        window.addEventListener('orientationchange', updateViewportHeightVariable);
+    </script>
 </body>
 
 </html>

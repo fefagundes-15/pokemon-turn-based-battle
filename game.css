@@ -30,7 +30,8 @@ body {
     font-family: var(--font-main);
     background: #000;
     color: #000;
-    min-height: 100vh;
+    min-height: 100dvh;
+    /* dynamic viewport on modern browsers */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -41,8 +42,9 @@ body {
 ========================= */
 .battle-screen {
     position: relative;
-    width: min(100vw, 100vh * 16 / 9);
-    height: calc(min(100vw, 100vh * 16 / 9) * 9 / 16);
+    /* use JS-driven viewport var to avoid mobile URL bar issues */
+    width: min(100vw, calc(var(--vh, 1vh) * 100 * 16 / 9));
+    height: calc(min(100vw, calc(var(--vh, 1vh) * 100 * 16 / 9)) * 9 / 16);
     border: 4px solid #000;
     background: #000;
     overflow: hidden;
@@ -52,7 +54,7 @@ body {
 @media (max-aspect-ratio: 9/16) {
     .battle-screen {
         width: 100vw;
-        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
     }
 }
 
@@ -94,7 +96,7 @@ body {
 
 .player-status {
     right: 6%;
-    bottom: 30%;
+    bottom: 29%;
 }
 
 /* DEF bar */
@@ -191,6 +193,31 @@ body {
     font-weight: 700;
 }
 
+/* ATK / SPD row */
+.status-extra-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+    font-size: 0.85em;
+
+    margin-left: auto;
+    /* empurra a linha para a direita */
+    justify-content: flex-end;
+}
+
+.status-extra-label {
+    font-weight: 700;
+}
+
+.status-extra-value {
+    font-weight: 700;
+}
+
+.status-extra-separator {
+    opacity: 0.7;
+}
+
 /* =========================
    Pokémon on Field
 ========================= */
@@ -218,7 +245,7 @@ body {
 
 /* Enemy (top right) */
 .enemy-pokemon {
-    top: 0%;
+    top: -6%;
     right: -2%;
 }
 

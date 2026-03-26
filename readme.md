@@ -1,0 +1,1 @@
+Turn-based Pokémon-inspired battle system built with pure HTML, CSS, and JavaScript. Features random Pokémon from PokéAPI, HP and Defense management, limited stat recovery, simple enemy AI for choosing actions, turn indicator, battle log, and small sprite animations when attacking or recovering.
