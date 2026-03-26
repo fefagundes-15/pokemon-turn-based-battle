@@ -804,7 +804,7 @@ function showNextLog() {
             element.textContent = "";
             element.classList.remove("show");
             showNextLog();
-        }, 1500);
+        }, 2000);
     } else {
         setTimeout(() => {
             element.textContent = "";
