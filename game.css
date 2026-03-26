@@ -90,12 +90,12 @@ body {
 }
 
 .enemy-status {
-    top: 10%;
-    left: 6%;
+    top: 12%;
+    left: 2%;
 }
 
 .player-status {
-    right: 6%;
+    right: 2%;
     bottom: 29%;
 }
 
@@ -442,6 +442,7 @@ body {
     font-size: 1.5rem;
     z-index: 4;
     min-height: 16px;
+    width: 20rem;
     pointer-events: none;
 }
 
@@ -474,6 +475,23 @@ body {
     color: #16a34a;
     /* green for HP */
     font-weight: 700;
+}
+
+.log-recovery-amount {
+    font-weight: 700;
+    color: #16a34a;
+    /* verde forte */
+}
+
+.log-recovery-count {
+    font-weight: 700;
+    color: #0f172a;
+    /* escuro para contraste */
+}
+
+.log-recovery-center {
+    margin-top: 2px;
+    text-align: center;
 }
 
 /* =========================

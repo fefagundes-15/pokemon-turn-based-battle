@@ -20,6 +20,9 @@ let currentTurn = null;
 
 let isStartBattleMessage = false;
 
+// Control if actions can occur (only when no logs are being shown)
+let canAct = true;
+
 // =========================
 // Capitalize first letter
 // =========================
@@ -58,6 +61,14 @@ function formatActionHp() {
     return `<span class="log-action-hp">HP</span>`;
 }
 
+function formatRecoveryAmount(amount) {
+    return `<span class="log-recovery-amount">+${amount}</span>`;
+}
+
+function formatRecoveryCount(count) {
+    return `<span class="log-recovery-count">${count}</span>`;
+}
+
 // =========================
 // Button Helpers
 // =========================
@@ -89,6 +100,17 @@ function setButtonStateSoft(button, enabled) {
 function updatePlayerButtonsState() {
     const { btnAttack, btnRun, btnHp, btnDef } = getBattleButtons();
 
+    // Se o botão Run já está em modo "Next battle", não mexer nele
+    if (btnRun && btnRun.textContent === "Next battle") {
+        btnRun.disabled = false;
+        btnRun.style.opacity = "1";
+        btnRun.style.cursor = "pointer";
+        if (btnAttack) setButtonStateHard(btnAttack, false);
+        if (btnHp) setButtonStateSoft(btnHp, false);
+        if (btnDef) setButtonStateSoft(btnDef, false);
+        return;
+    }
+
     // If battle ended or Pokémon not loaded yet
     if (!leftPokemon || !rightPokemon || currentTurn === null) {
         setButtonStateHard(btnAttack, false);
@@ -100,22 +122,24 @@ function updatePlayerButtonsState() {
 
     const isPlayerTurn = currentTurn === "player";
 
-    // Attack and Run only on player's turn
-    setButtonStateHard(btnAttack, isPlayerTurn);
-    setButtonStateHard(btnRun, isPlayerTurn);
+    const actionAllowed = isPlayerTurn && canAct;
+
+    // Attack and Run only on player's turn and when canAct
+    setButtonStateHard(btnAttack, actionAllowed);
+    setButtonStateHard(btnRun, actionAllowed);
 
     const isHpFull = leftCurrentHp >= leftPokemon.hp;
     const isDefenseFull = leftCurrentDefense >= leftPokemon.defense;
 
     const canUseHpVisual =
-        isPlayerTurn &&
+        actionAllowed &&
         !isHpFull &&
         leftHpUsageCount > 0 &&
         leftCurrentHp > 0 &&
         rightCurrentHp > 0;
 
     const canUseDefenseVisual =
-        isPlayerTurn &&
+        actionAllowed &&
         !isDefenseFull &&
         leftDefenseUsageCount > 0 &&
         leftCurrentDefense > 0 &&
@@ -210,7 +234,6 @@ async function fetchPokemons() {
             enqueueLog(
                 `${formatEnemyName(rightPokemon.name)} is faster and starts!`
             );
-            setTimeout(enemyTurn, 2500);
         } else {
             currentTurn = Math.random() < 0.5 ? "player" : "enemy";
             const starter =
@@ -218,9 +241,6 @@ async function fetchPokemons() {
                     ? formatPlayerName(leftPokemon.name)
                     : formatEnemyName(rightPokemon.name);
             enqueueLog(`Same speed! ${starter} starts!`);
-            if (currentTurn === "enemy") {
-                setTimeout(enemyTurn, 2500);
-            }
         }
 
         updateTurnIndicator();
@@ -341,14 +361,18 @@ function setPokemon(pokemon, index) {
 
         if (btnAttack) {
             btnAttack.onclick = () => {
-                if (currentTurn !== "player") return;
+                if (currentTurn !== "player" || !canAct) return;
                 playerAttack();
             };
         }
 
         if (btnRun) {
             btnRun.onclick = () => {
-                if (currentTurn !== "player") return;
+                if (btnRun.textContent === "Next battle") {
+                    window.location.reload();
+                    return;
+                }
+                if (currentTurn !== "player" || !canAct) return;
                 enqueueLog(
                     `${formatPlayerName(pokemon.name)} ran away safely!`
                 );
@@ -362,13 +386,13 @@ function setPokemon(pokemon, index) {
                 updatePlayerButtonsState();
                 setTimeout(() => {
                     window.location.reload();
-                }, 2500);
+                }, 2000);
             };
         }
 
-        // HP and DEF: always clickable, but may show messages instead of acting
         if (btnHp) {
             btnHp.onclick = () => {
+                if (!canAct) return;
                 if (currentTurn === null || !leftPokemon || !rightPokemon) {
                     enqueueLog("The battle is already over!");
                     return;
@@ -396,6 +420,7 @@ function setPokemon(pokemon, index) {
 
         if (btnDef) {
             btnDef.onclick = () => {
+                if (!canAct) return;
                 if (currentTurn === null || !leftPokemon || !rightPokemon) {
                     enqueueLog("The battle is already over!");
                     return;
@@ -480,6 +505,7 @@ function highlightNextBattleButton() {
     btnRun.style.transform = "scale(1.05)";
     btnRun.style.boxShadow = "0 0 12px rgba(1, 23, 150, 0.8)";
     btnRun.style.fontWeight = "700";
+    btnRun.textContent = "Next battle";
 
     const fadeAndDisable = (button) => {
         if (!button) return;
@@ -502,25 +528,17 @@ function highlightNextBattleButton() {
 function checkBattleEnd() {
     if (rightCurrentHp <= 0) {
         enqueueLog(`${formatEnemyName(rightPokemon.name)} fainted!`);
-        const { btnRun } = getBattleButtons();
-        if (btnRun) {
-            btnRun.textContent = "Next battle";
-        }
+        highlightNextBattleButton();
         currentTurn = null;
         updateTurnIndicator();
-        highlightNextBattleButton();
         return true;
     }
 
     if (leftCurrentHp <= 0) {
         enqueueLog(`${formatPlayerName(leftPokemon.name)} fainted!`);
-        const { btnRun } = getBattleButtons();
-        if (btnRun) {
-            btnRun.textContent = "Next battle";
-        }
+        highlightNextBattleButton();
         currentTurn = null;
         updateTurnIndicator();
-        highlightNextBattleButton();
         return true;
     }
 
@@ -532,7 +550,6 @@ function endPlayerTurn() {
     currentTurn = "enemy";
     updateTurnIndicator();
     updatePlayerButtonsState();
-    setTimeout(enemyTurn, 2500);
 }
 
 function endEnemyTurn() {
@@ -553,6 +570,8 @@ function endEnemyTurn() {
 function playerAttack() {
     const attacker = leftPokemon;
     const defender = rightPokemon;
+
+    if (!canAct) return;
 
     if (rightCurrentHp <= 0 || leftCurrentHp <= 0) {
         enqueueLog("The battle is already over!");
@@ -593,6 +612,7 @@ function playerAttack() {
 // =========================
 
 function enemyTurn() {
+    if (!canAct) return;
     if (currentTurn !== "enemy" || !rightPokemon) return;
     if (checkBattleEnd()) return;
 
@@ -675,6 +695,7 @@ function enemyAttack() {
     const attacker = rightPokemon;
     const defender = leftPokemon;
 
+    if (!canAct) return;
     if (rightCurrentHp <= 0 || leftCurrentHp <= 0) {
         return;
     }
@@ -714,6 +735,7 @@ function enemyAttack() {
 
 function recoverStat(action, actor) {
     const isPlayer = actor === "player";
+    if (!canAct) return;
 
     const pokemon = isPlayer ? leftPokemon : rightPokemon;
     let currentHp = isPlayer ? leftCurrentHp : rightCurrentHp;
@@ -780,7 +802,11 @@ function recoverStat(action, actor) {
             currentDefense = Math.max(currentDefense, 0);
             defenseUsage--;
             enqueueLog(
-                `${formatNameForSide(pokemon, isPlayer)}'s ${formatActionDefense()} increased by ${randomAmount}.<br>Recoveries left: ${defenseUsage}`
+                `${formatNameForSide(pokemon, isPlayer)}'s ${formatActionDefense()} increased by ${formatRecoveryAmount(
+                    randomAmount,
+                )}.<div class="log-recovery-center">Recoveries left: ${formatRecoveryCount(
+                    defenseUsage,
+                )}</div>`
             );
         } else {
             enqueueLog(
@@ -802,7 +828,11 @@ function recoverStat(action, actor) {
             currentHp = Math.max(currentHp, 0);
             hpUsage--;
             enqueueLog(
-                `${formatNameForSide(pokemon, isPlayer)}'s ${formatActionHp()} recovered by ${randomAmount}.<br>Recoveries left: ${hpUsage}`
+                `${formatNameForSide(pokemon, isPlayer)}'s ${formatActionHp()} recovered by ${formatRecoveryAmount(
+                    randomAmount,
+                )}.<div class="log-recovery-center">Recoveries left: ${formatRecoveryCount(
+                    hpUsage,
+                )}</div>`
             );
         } else {
             enqueueLog(
@@ -820,7 +850,6 @@ function recoverStat(action, actor) {
         }
     }
 
-    // Action animation for recovery
     animatePokemonAction(isPlayer ? 1 : 2);
 
     if (isPlayer) {
@@ -854,7 +883,6 @@ const logQueue = [];
 let isShowingLog = false;
 
 function enqueueLog(message) {
-    // message can contain HTML (span with classes for color)
     logQueue.push(message);
     if (!isShowingLog) {
         showNextLog();
@@ -862,49 +890,46 @@ function enqueueLog(message) {
 }
 
 function showNextLog() {
+    const element = document.getElementById("log");
+    if (!element) return;
+
     if (logQueue.length === 0) {
         isShowingLog = false;
+        canAct = true;
+        element.innerHTML = "";
+        element.style.display = "none";
+        updatePlayerButtonsState();
+
+        // If it's enemy turn and no logs, enemy acts now
+        if (currentTurn === "enemy") {
+            setTimeout(() => {
+                if (currentTurn === "enemy" && canAct) {
+                    enemyTurn();
+                }
+            }, 50);
+        }
+
         return;
     }
 
     isShowingLog = true;
-    const message = logQueue.shift();
-    const element = document.getElementById("log");
-    if (!element) return;
+    canAct = false;
+    updatePlayerButtonsState();
 
+    const message = logQueue.shift();
+
+    element.style.display = "block";
     element.innerHTML = message;
 
     element.classList.remove("show");
     void element.offsetWidth;
     element.classList.add("show");
 
-    if (!isStartBattleMessage) {
-        setTimeout(() => {
-            element.innerHTML = "";
-            element.classList.remove("show");
-            showNextLog();
-        }, 1750);
-    } else {
-        setTimeout(() => {
-            element.innerHTML = "";
-            element.classList.remove("show");
-            showNextLog();
-            isStartBattleMessage = false;
-        }, 2500);
-    }
-}
-
-function visualFx(id, property, newValue, originalValue, duration = 2000) {
-    const element = document.getElementById(id);
-    if (!element) return;
-
-    const previous = originalValue ?? element.style[property];
-
-    element.style[property] = newValue;
-
     setTimeout(() => {
-        element.style[property] = previous;
-    }, duration);
+        element.innerHTML = "";
+        element.classList.remove("show");
+        showNextLog();
+    }, 1750);
 }
 
 // =========================
