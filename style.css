@@ -1,0 +1,535 @@
+/* =========================
+   Reset & Base
+========================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg-sky-top: #f8f8f8;
+    --bg-sky-bottom: #e0e0e0;
+    --bg-ground: #c8f0c0;
+    --bg-ground-dark: #9bd08e;
+    --border-ui: #000000;
+    --ui-gray: #f8f8f8;
+    --ui-gray-dark: #c0c0c0;
+    --ui-blue: #3b82f6;
+    --ui-green: #22c55e;
+    --ui-red: #fb7185;
+    --ui-yellow: #facc15;
+    --font-main: "Press Start 2P", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, sans-serif;
+}
+
+/* =========================
+   Base
+========================= */
+body {
+    font-family: var(--font-main);
+    background: #000;
+    color: #000;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* =========================
+   16:9 Battle Screen
+========================= */
+.battle-screen {
+    position: relative;
+    width: min(100vw, 100vh * 16 / 9);
+    height: calc(min(100vw, 100vh * 16 / 9) * 9 / 16);
+    border: 4px solid #000;
+    background: #000;
+    overflow: hidden;
+}
+
+/* Adjust for very vertical screens (portrait mobile) */
+@media (max-aspect-ratio: 9/16) {
+    .battle-screen {
+        width: 100vw;
+        height: 100vh;
+    }
+}
+
+/* =========================
+   Background (sky + ground)
+========================= */
+.battle-background {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(to bottom,
+            var(--bg-sky-top) 0%,
+            var(--bg-sky-bottom) 40%,
+            var(--bg-ground) 40%,
+            var(--bg-ground-dark) 100%);
+    z-index: 0;
+}
+
+/* =========================
+   Status Bars
+========================= */
+.enemy-status,
+.player-status {
+    position: absolute;
+    width: 45%;
+    max-width: 260px;
+    background: var(--ui-gray);
+    border: 3px solid var(--border-ui);
+    border-radius: 10px;
+    padding: 6px 8px;
+    box-shadow: 0 4px 0 #555;
+    font-size: 1rem;
+}
+
+.enemy-status {
+    top: 10%;
+    left: 6%;
+}
+
+.player-status {
+    right: 6%;
+    bottom: 30%;
+}
+
+/* DEF bar */
+.def-bar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 2px;
+}
+
+.def-bar-wrapper.small .def-bar-outer {
+    height: 6px;
+}
+
+.def-label {
+    font-size: 0.7em;
+}
+
+.def-bar-outer {
+    flex: 1;
+    height: 8px;
+    border-radius: 999px;
+    border: 2px solid #000;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.def-bar-inner {
+    height: 100%;
+    width: 100%;
+    /* different color from HP */
+    background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+    transition: width 0.3s ease;
+}
+
+.def-text {
+    font-weight: 700;
+}
+
+/* Header: name + level */
+.status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.status-name {
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.status-level {
+    font-weight: 700;
+}
+
+/* HP bar */
+.hp-bar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.hp-bar-wrapper.small .hp-bar-outer {
+    height: 6px;
+}
+
+.hp-label {
+    font-size: 0.7em;
+}
+
+.hp-bar-outer {
+    flex: 1;
+    height: 8px;
+    border-radius: 999px;
+    border: 2px solid #000;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.hp-bar-inner {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #22c55e, #4ade80);
+    transition: width 0.3s ease;
+}
+
+.status-extra {
+    font-size: 0.7em;
+}
+
+.hp-text {
+    font-weight: 700;
+}
+
+/* =========================
+   Pokémon on Field
+========================= */
+.enemy-pokemon,
+.player-pokemon {
+    position: absolute;
+    width: 46%;
+    height: 46%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 2;
+}
+
+.enemy-pokemon img,
+.player-pokemon img {
+    position: relative;
+    z-index: 2;
+    width: auto;
+    height: 70%;
+    /* adjust this to tweak Pokémon “size” */
+    image-rendering: pixelated;
+    object-fit: contain;
+}
+
+/* Enemy (top right) */
+.enemy-pokemon {
+    top: 0%;
+    right: -2%;
+}
+
+/* Player (bottom left) */
+.player-pokemon {
+    bottom: 30%;
+    left: -2%;
+}
+
+/* Player facing backwards */
+.player-pokemon img {
+    transform: scaleX(-1);
+}
+
+/* Grass / platforms (GBA-style) */
+.enemy-grass,
+.player-grass {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(circle at center,
+            #e5f7e3 0%,
+            #c1e4bd 40%,
+            #7cae73 80%,
+            transparent 100%);
+    z-index: 1;
+}
+
+.enemy-grass {
+    bottom: 0%;
+    width: 80%;
+    height: 46%;
+}
+
+.player-grass {
+    top: 52%;
+    width: 85%;
+    height: 50%;
+}
+
+/* Larger sprites */
+.enemy-pokemon img,
+.player-pokemon img {
+    position: relative;
+    z-index: 2;
+    max-width: 85%;
+    max-height: 90%;
+    image-rendering: pixelated;
+}
+
+/* Player facing backwards */
+.player-pokemon img {
+    transform: scaleX(-1);
+}
+
+/* =========================
+   Dialog Box / Menu
+========================= */
+.dialog-box {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 28%;
+    background: var(--ui-gray);
+    border-top: 4px solid #000;
+    display: grid;
+    /* text ~40%, menu ~60% */
+    grid-template-columns: 1.2fr 1.8fr;
+    padding: 6px 10px;
+    gap: 6px;
+    font-size: 1.5rem;
+    z-index: 3;
+}
+
+/* Dialog text */
+.dialog-text {
+    border: 3px solid #000;
+    border-radius: 10px;
+    padding: 8px;
+    background: #ffffff;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+#dialogText {
+    line-height: 1.3;
+}
+
+/* Menu options (4 buttons) */
+.dialog-menu {
+    border: 3px solid #000;
+    border-radius: 10px;
+    background: #ffffff;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 6px;
+    padding: 8px 10px;
+}
+
+/* Buttons */
+.menu-btn {
+    font-family: var(--font-main);
+    font-size: 1rem;
+    color: #000;
+    border: 2px solid #000;
+    border-radius: 8px;
+    background: var(--ui-gray);
+    cursor: pointer;
+    box-shadow: 0 3px 0 #555;
+    text-transform: uppercase;
+    outline: none;
+    padding: 4px 0;
+}
+
+.menu-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #555;
+}
+
+.menu-btn.fight {
+    background: var(--ui-red);
+}
+
+.menu-btn.hp {
+    background: var(--ui-yellow);
+}
+
+.menu-btn.def {
+    background: var(--ui-green);
+}
+
+.menu-btn.run {
+    background: var(--ui-blue);
+}
+
+/* =========================
+   Turn Indicator
+========================= */
+.turn-indicator {
+    position: absolute;
+    top: 1.5%;
+    right: 4%;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, #ffffff, #e5e7eb);
+    border-radius: 999px;
+    border: 2px solid #000;
+    box-shadow:
+        0 3px 0 #4b5563,
+        0 0 10px rgba(0, 0, 0, 0.35);
+    font-size: 0.9rem;
+    z-index: 5;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* “LED” icon */
+.turn-indicator::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid #000;
+    background: radial-gradient(circle at 30% 30%, #ffffff, #22c55e);
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.8);
+}
+
+/* Visual highlight (not currently used in JS, but available) */
+.player-turn-glow {
+    box-shadow: 0 0 12px 4px rgba(34, 197, 94, 0.8);
+}
+
+.enemy-turn-glow {
+    box-shadow: 0 0 12px 4px rgba(248, 113, 113, 0.8);
+}
+
+/* =========================
+   Battle Log (top)
+========================= */
+.battle-log {
+    position: absolute;
+    top: 1.5%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 6px;
+    border: 2px solid #000;
+    font-size: 1.5rem;
+    z-index: 4;
+    min-height: 16px;
+    pointer-events: none;
+}
+
+/* =========================
+   Pokémon Action Animation
+========================= */
+/* Player (left) always mirrored to look to the right */
+#img1 {
+    position: relative;
+    transform: scaleX(-1);
+}
+
+/* Enemy (right) normal */
+#img2 {
+    position: relative;
+}
+
+/* Classes applied by JS */
+.pokemon-action-player {
+    animation: pokemonActionPlayer 0.18s ease-out;
+}
+
+.pokemon-action-enemy {
+    animation: pokemonActionEnemy 0.18s ease-out;
+}
+
+/* =========================
+   Extra Responsiveness
+========================= */
+@media (max-width: 480px) {
+    .dialog-box {
+        height: 32%;
+        grid-template-columns: 1.1fr 1.9fr;
+        padding: 4px 6px;
+        gap: 4px;
+        font-size: 1.2rem;
+    }
+
+    .dialog-text {
+        padding: 6px;
+    }
+
+    .dialog-menu {
+        padding: 6px 8px;
+        gap: 4px;
+    }
+
+    .menu-btn {
+        font-size: .8rem;
+    }
+
+    .player-status {
+        right: 6%;
+        bottom: 35%;
+    }
+
+    .player-grass {
+        top: 57%;
+        width: 120%;
+        height: 30%;
+    }
+
+    .enemy-pokemon {
+        top: 5%;
+        right: 2%;
+    }
+
+    .enemy-grass {
+        left: 48%;
+        bottom: 12%;
+        width: 120%;
+        height: 30%;
+    }
+
+    .enemy-status {
+        top: 15%;
+    }
+
+    .turn-indicator {
+        top: 90%;
+        right: 67%;
+        width: 6.5rem;
+    }
+
+    .battle-log {
+        width: 15rem;
+    }
+}
+
+/* Player: keep scaleX(-1) + move down */
+@keyframes pokemonActionPlayer {
+    0% {
+        transform: scaleX(-1) translateY(0);
+    }
+
+    40% {
+        transform: scaleX(-1) translateY(10px);
+    }
+
+    100% {
+        transform: scaleX(-1) translateY(0);
+    }
+}
+
+/* Enemy: only move down (no mirror) */
+@keyframes pokemonActionEnemy {
+    0% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(10px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}

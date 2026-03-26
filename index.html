@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokémon Battle</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="battle-screen">
+        <!-- SKY / BACKGROUND -->
+        <div class="battle-background"></div>
+
+        <!-- ENEMY STATUS BAR (TOP LEFT) -->
+        <div class="enemy-status">
+            <div class="status-header">
+                <span id="name2" class="status-name"></span>
+                <span class="status-level">Lv. <span id="level2">50</span></span>
+            </div>
+            <div class="hp-bar-wrapper small">
+                <span class="hp-label">HP</span>
+                <div class="hp-bar-outer">
+                    <div id="hp-Bar2" class="hp-bar-inner"></div>
+                </div>
+            </div>
+            <div class="status-extra">
+                <span id="hp2" class="hp-text"></span>
+            </div>
+
+            <!-- ENEMY DEFENSE BAR -->
+            <div class="def-bar-wrapper small">
+                <span class="def-label">DEF</span>
+                <div class="def-bar-outer">
+                    <div id="def-Bar2" class="def-bar-inner"></div>
+                </div>
+            </div>
+            <div class="status-extra">
+                <span id="def2" class="def-text"></span>
+            </div>
+        </div>
+
+        <!-- ENEMY POKÉMON (TOP RIGHT) -->
+        <div class="enemy-pokemon">
+            <div class="enemy-grass"></div>
+            <img id="img2" src="" alt="Enemy Pokémon" />
+        </div>
+
+        <!-- PLAYER POKÉMON (BOTTOM LEFT) -->
+        <div class="player-pokemon">
+            <div class="player-grass"></div>
+            <img id="img1" src="" alt="Player Pokémon" />
+        </div>
+
+        <!-- PLAYER STATUS BAR (BOTTOM RIGHT) -->
+        <div class="player-status">
+            <div class="status-header">
+                <span id="name1" class="status-name"></span>
+                <span class="status-level">Lv. <span id="level1">42</span></span>
+            </div>
+            <div class="hp-bar-wrapper">
+                <span class="hp-label">HP</span>
+                <div class="hp-bar-outer">
+                    <div id="hp-Bar1" class="hp-bar-inner"></div>
+                </div>
+            </div>
+            <div class="status-extra">
+                <span id="hp1" class="hp-text"></span>
+            </div>
+
+            <!-- PLAYER DEFENSE BAR -->
+            <div class="def-bar-wrapper">
+                <span class="def-label">DEF</span>
+                <div class="def-bar-outer">
+                    <div id="def-Bar1" class="def-bar-inner"></div>
+                </div>
+            </div>
+            <div class="status-extra">
+                <span id="def1" class="def-text"></span>
+            </div>
+        </div>
+
+        <!-- TEXT BOX + MENU -->
+        <div class="dialog-box">
+            <div class="dialog-text">
+                <span id="dialogText">What will your Pokémon do?</span>
+            </div>
+            <div class="dialog-menu">
+                <button id="btnAttack" class="menu-btn fight">Fight</button>
+                <button id="btnDef" class="menu-btn def">Increase Defense</button>
+                <button id="btnHp" class="menu-btn hp">Restore HP</button>
+                <button id="btnRun" class="menu-btn run">Run</button>
+            </div>
+        </div>
+
+        <!-- TURN INDICATOR -->
+        <div id="turnIndicator" class="turn-indicator"></div>
+
+        <!-- SMALL BATTLE LOG (e.g. "Pikachu used Tackle!") -->
+        <div id="log" class="battle-log"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
