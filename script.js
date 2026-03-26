@@ -21,6 +21,44 @@ let currentTurn = null;
 let isStartBattleMessage = false;
 
 // =========================
+// Capitalize first letter
+// =========================
+function capitalizeFirstLetter(text) {
+    if (!text) return "";
+    return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+// =========================
+// Log color helpers
+// =========================
+
+function formatPlayerName(name) {
+    return `<span class="log-player-name">${capitalizeFirstLetter(name)}</span>`;
+}
+
+function formatEnemyName(name) {
+    return `<span class="log-enemy-name">${capitalizeFirstLetter(name)}</span>`;
+}
+
+function formatNameForSide(pokemon, isPlayer) {
+    return isPlayer
+        ? formatPlayerName(pokemon.name)
+        : formatEnemyName(pokemon.name);
+}
+
+function formatActionAttack() {
+    return `<span class="log-action-attack">Attack</span>`;
+}
+
+function formatActionDefense() {
+    return `<span class="log-action-defense">Defense</span>`;
+}
+
+function formatActionHp() {
+    return `<span class="log-action-hp">HP</span>`;
+}
+
+// =========================
 // Button Helpers
 // =========================
 
@@ -111,7 +149,7 @@ function simplifyPokemon(rawPokemon) {
     const speedStat = rawPokemon.stats.find((stat) => stat.stat.name === "speed");
 
     return {
-        name: rawPokemon.name,
+        name: capitalizeFirstLetter(rawPokemon.name),
         id: rawPokemon.id,
         hp: hpStat ? hpStat.base_stat : 0,
         attack: attackStat ? attackStat.base_stat : 0,
@@ -163,20 +201,25 @@ async function fetchPokemons() {
         if (leftPokemon.speed > rightPokemon.speed) {
             currentTurn = "player";
             isStartBattleMessage = true;
-            enqueueLog(`${leftPokemon.name} is faster and starts!`);
+            enqueueLog(
+                `${formatPlayerName(leftPokemon.name)} is faster and starts!`
+            );
         } else if (rightPokemon.speed > leftPokemon.speed) {
             currentTurn = "enemy";
             isStartBattleMessage = true;
-            enqueueLog(`${rightPokemon.name} is faster and starts!`);
-            setTimeout(enemyTurn, 2000);
+            enqueueLog(
+                `${formatEnemyName(rightPokemon.name)} is faster and starts!`
+            );
+            setTimeout(enemyTurn, 2500);
         } else {
             currentTurn = Math.random() < 0.5 ? "player" : "enemy";
-            enqueueLog(
-                `Same speed! ${currentTurn === "player" ? leftPokemon.name : rightPokemon.name
-                } starts!`,
-            );
+            const starter =
+                currentTurn === "player"
+                    ? formatPlayerName(leftPokemon.name)
+                    : formatEnemyName(rightPokemon.name);
+            enqueueLog(`Same speed! ${starter} starts!`);
             if (currentTurn === "enemy") {
-                setTimeout(enemyTurn, 2000);
+                setTimeout(enemyTurn, 2500);
             }
         }
 
@@ -232,7 +275,7 @@ function setPokemon(pokemon, index) {
     const imageElement = document.getElementById(`img${index}`);
 
     if (nameElement) {
-        nameElement.textContent = pokemon.name;
+        nameElement.textContent = capitalizeFirstLetter(pokemon.name);
     }
 
     const currentHp = index === 1 ? leftCurrentHp : rightCurrentHp;
@@ -283,7 +326,7 @@ function setPokemon(pokemon, index) {
 
     if (imageElement) {
         imageElement.src = pokemon.sprite;
-        imageElement.alt = `Image of ${pokemon.name}`;
+        imageElement.alt = `Image of ${capitalizeFirstLetter(pokemon.name)}`;
         imageElement.style.position = "relative";
     }
 
@@ -291,7 +334,7 @@ function setPokemon(pokemon, index) {
     if (index === 1) {
         const dialogElement = document.getElementById("dialogText");
         if (dialogElement) {
-            dialogElement.textContent = `What will ${pokemon.name.toUpperCase()} do?`;
+            dialogElement.textContent = `What will ${capitalizeFirstLetter(pokemon.name)} do?`;
         }
 
         const { btnAttack, btnRun, btnHp, btnDef } = getBattleButtons();
@@ -306,16 +349,20 @@ function setPokemon(pokemon, index) {
         if (btnRun) {
             btnRun.onclick = () => {
                 if (currentTurn !== "player") return;
-                enqueueLog(`${pokemon.name} ran away safely!`);
+                enqueueLog(
+                    `${formatPlayerName(pokemon.name)} ran away safely!`
+                );
                 if (dialogElement) {
-                    dialogElement.textContent = `${pokemon.name.toUpperCase()} ran away...`;
+                    dialogElement.textContent = `${capitalizeFirstLetter(
+                        pokemon.name,
+                    )} ran away...`;
                 }
                 currentTurn = null;
                 updateTurnIndicator();
                 updatePlayerButtonsState();
                 setTimeout(() => {
                     window.location.reload();
-                }, 2000);
+                }, 2500);
             };
         }
 
@@ -331,11 +378,15 @@ function setPokemon(pokemon, index) {
                     return;
                 }
                 if (leftCurrentHp >= leftPokemon.hp) {
-                    enqueueLog(`${leftPokemon.name}'s HP is already full!`);
+                    enqueueLog(
+                        `${formatPlayerName(leftPokemon.name)}'s ${formatActionHp()} is already full!`
+                    );
                     return;
                 }
                 if (leftHpUsageCount <= 0) {
-                    enqueueLog(`${leftPokemon.name} has no HP recoveries left!`);
+                    enqueueLog(
+                        `${formatPlayerName(leftPokemon.name)} has no ${formatActionHp()} recoveries left!`
+                    );
                     return;
                 }
 
@@ -354,15 +405,21 @@ function setPokemon(pokemon, index) {
                     return;
                 }
                 if (leftCurrentDefense <= 0) {
-                    enqueueLog(`${leftPokemon.name}'s defense is already broken!`);
+                    enqueueLog(
+                        `${formatPlayerName(leftPokemon.name)}'s ${formatActionDefense()} is already broken!`
+                    );
                     return;
                 }
                 if (leftCurrentDefense >= leftPokemon.defense) {
-                    enqueueLog(`${leftPokemon.name}'s defense is already full!`);
+                    enqueueLog(
+                        `${formatPlayerName(leftPokemon.name)}'s ${formatActionDefense()} is already full!`
+                    );
                     return;
                 }
                 if (leftDefenseUsageCount <= 0) {
-                    enqueueLog(`${leftPokemon.name} has no defense recoveries left!`);
+                    enqueueLog(
+                        `${formatPlayerName(leftPokemon.name)} has no ${formatActionDefense()} recoveries left!`
+                    );
                     return;
                 }
 
@@ -395,11 +452,8 @@ function animatePokemonAction(index) {
     const img = document.getElementById(`img${index}`);
     if (!img) return;
 
-    // Reset animation classes
     img.classList.remove("pokemon-action-player");
     img.classList.remove("pokemon-action-enemy");
-
-    // Force reflow so animation can restart
     void img.offsetWidth;
 
     if (index === 1) {
@@ -417,7 +471,6 @@ function highlightNextBattleButton() {
     const { btnAttack, btnRun, btnHp, btnDef } = getBattleButtons();
     if (!btnRun) return;
 
-    // Make "Next battle" very visible and clickable
     btnRun.disabled = false;
     btnRun.style.opacity = "1";
     btnRun.style.cursor = "pointer";
@@ -448,7 +501,7 @@ function highlightNextBattleButton() {
 
 function checkBattleEnd() {
     if (rightCurrentHp <= 0) {
-        enqueueLog(`${rightPokemon.name} fainted!`);
+        enqueueLog(`${formatEnemyName(rightPokemon.name)} fainted!`);
         const { btnRun } = getBattleButtons();
         if (btnRun) {
             btnRun.textContent = "Next battle";
@@ -460,7 +513,7 @@ function checkBattleEnd() {
     }
 
     if (leftCurrentHp <= 0) {
-        enqueueLog(`${leftPokemon.name} fainted!`);
+        enqueueLog(`${formatPlayerName(leftPokemon.name)} fainted!`);
         const { btnRun } = getBattleButtons();
         if (btnRun) {
             btnRun.textContent = "Next battle";
@@ -479,7 +532,7 @@ function endPlayerTurn() {
     currentTurn = "enemy";
     updateTurnIndicator();
     updatePlayerButtonsState();
-    setTimeout(enemyTurn, 2000);
+    setTimeout(enemyTurn, 2500);
 }
 
 function endEnemyTurn() {
@@ -488,7 +541,7 @@ function endEnemyTurn() {
     updateTurnIndicator();
     const dialogElement = document.getElementById("dialogText");
     if (dialogElement && leftPokemon) {
-        dialogElement.textContent = `What will ${leftPokemon.name.toUpperCase()} do?`;
+        dialogElement.textContent = `WHAT WILL ${leftPokemon.name.toUpperCase()} DO?`;
     }
     updatePlayerButtonsState();
 }
@@ -506,7 +559,9 @@ function playerAttack() {
         return;
     }
 
-    enqueueLog(`${attacker.name} used Attack on ${defender.name}!`);
+    enqueueLog(
+        `${formatPlayerName(attacker.name)} used ${formatActionAttack()} on ${formatEnemyName(defender.name)}!`
+    );
     animatePokemonAction(1);
 
     let remainingAttack = attacker.attack;
@@ -624,7 +679,9 @@ function enemyAttack() {
         return;
     }
 
-    enqueueLog(`${attacker.name} used Attack on ${defender.name}!`);
+    enqueueLog(
+        `${formatEnemyName(attacker.name)} used ${formatActionAttack()} on ${formatPlayerName(defender.name)}!`
+    );
     animatePokemonAction(2);
 
     let remainingAttack = attacker.attack;
@@ -673,7 +730,9 @@ function recoverStat(action, actor) {
     }
 
     if (action === "defense" && defenseUsage <= 0) {
-        enqueueLog(`${pokemon.name} has no defense recoveries left!`);
+        enqueueLog(
+            `${formatNameForSide(pokemon, isPlayer)} has no ${formatActionDefense()} recoveries left!`
+        );
         if (isPlayer) {
             setPokemon(leftPokemon, 1);
             setPokemon(rightPokemon, 2);
@@ -686,7 +745,9 @@ function recoverStat(action, actor) {
     }
 
     if (action === "hp" && hpUsage <= 0) {
-        enqueueLog(`${pokemon.name} has no HP recoveries left!`);
+        enqueueLog(
+            `${formatNameForSide(pokemon, isPlayer)} has no ${formatActionHp()} recoveries left!`
+        );
         if (isPlayer) {
             setPokemon(leftPokemon, 1);
             setPokemon(rightPokemon, 2);
@@ -700,7 +761,9 @@ function recoverStat(action, actor) {
 
     if (action === "defense") {
         if (currentDefense <= 0) {
-            enqueueLog(`${pokemon.name}'s defense is already broken!`);
+            enqueueLog(
+                `${formatNameForSide(pokemon, isPlayer)}'s ${formatActionDefense()} is already broken!`
+            );
             if (isPlayer) {
                 setPokemon(leftPokemon, 1);
                 setPokemon(rightPokemon, 2);
@@ -717,10 +780,12 @@ function recoverStat(action, actor) {
             currentDefense = Math.max(currentDefense, 0);
             defenseUsage--;
             enqueueLog(
-                `${pokemon.name}'s defense increased by ${randomAmount}. Recoveries left: ${defenseUsage}`,
+                `${formatNameForSide(pokemon, isPlayer)}'s ${formatActionDefense()} increased by ${randomAmount}.<br>Recoveries left: ${defenseUsage}`
             );
         } else {
-            enqueueLog(`${pokemon.name}'s defense is already full!`);
+            enqueueLog(
+                `${formatNameForSide(pokemon, isPlayer)}'s ${formatActionDefense()} is already full!`
+            );
             if (isPlayer) {
                 setPokemon(leftPokemon, 1);
                 setPokemon(rightPokemon, 2);
@@ -737,10 +802,12 @@ function recoverStat(action, actor) {
             currentHp = Math.max(currentHp, 0);
             hpUsage--;
             enqueueLog(
-                `${pokemon.name}'s HP recovered by ${randomAmount}. Recoveries left: ${hpUsage}`,
+                `${formatNameForSide(pokemon, isPlayer)}'s ${formatActionHp()} recovered by ${randomAmount}.<br>Recoveries left: ${hpUsage}`
             );
         } else {
-            enqueueLog(`${pokemon.name}'s HP is already full!`);
+            enqueueLog(
+                `${formatNameForSide(pokemon, isPlayer)}'s ${formatActionHp()} is already full!`
+            );
             if (isPlayer) {
                 setPokemon(leftPokemon, 1);
                 setPokemon(rightPokemon, 2);
@@ -787,6 +854,7 @@ const logQueue = [];
 let isShowingLog = false;
 
 function enqueueLog(message) {
+    // message can contain HTML (span with classes for color)
     logQueue.push(message);
     if (!isShowingLog) {
         showNextLog();
@@ -804,7 +872,7 @@ function showNextLog() {
     const element = document.getElementById("log");
     if (!element) return;
 
-    element.textContent = message;
+    element.innerHTML = message;
 
     element.classList.remove("show");
     void element.offsetWidth;
@@ -812,17 +880,17 @@ function showNextLog() {
 
     if (!isStartBattleMessage) {
         setTimeout(() => {
-            element.textContent = "";
+            element.innerHTML = "";
             element.classList.remove("show");
             showNextLog();
-        }, 1200);
+        }, 1750);
     } else {
         setTimeout(() => {
-            element.textContent = "";
+            element.innerHTML = "";
             element.classList.remove("show");
             showNextLog();
             isStartBattleMessage = false;
-        }, 2000);
+        }, 2500);
     }
 }
 

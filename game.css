@@ -445,6 +445,37 @@ body {
     pointer-events: none;
 }
 
+/* Colored log parts */
+.log-player-name {
+    color: #2563eb;
+    /* blue */
+    font-weight: 700;
+}
+
+.log-enemy-name {
+    color: #af1e1e;
+    /* red */
+    font-weight: 700;
+}
+
+.log-action-attack {
+    color: #ee4d31;
+    /* strong attack red */
+    font-weight: 700;
+}
+
+.log-action-defense {
+    color: #0891b2;
+    /* teal/cyan for defense */
+    font-weight: 700;
+}
+
+.log-action-hp {
+    color: #16a34a;
+    /* green for HP */
+    font-weight: 700;
+}
+
 /* =========================
    Pokémon Action Animation
 ========================= */
