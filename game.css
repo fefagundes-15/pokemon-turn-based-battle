@@ -500,7 +500,13 @@ body {
     }
 
     .battle-log {
+        top: 5%;
         width: 15rem;
+    }
+
+    .hp-bar-inner {
+        height: 50%;
+        width: 100%;
     }
 }
 

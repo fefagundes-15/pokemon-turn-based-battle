@@ -1,0 +1,368 @@
+/* Fonte pixelada básica (fallback se não houver fonte externa) */
+@font-face {
+    font-family: 'RetroPixel';
+    src: local('Courier New'), local('Lucida Console');
+}
+
+/* RESET BÁSICO */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-family: 'RetroPixel', monospace;
+    background: radial-gradient(circle at top, #12213a 0, #02030c 40%, #000000 100%);
+    color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+/* EFEITO DE SCANLINES (CRT ANTIGO) */
+.scanlines {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.2) 0px,
+            rgba(0, 0, 0, 0.2) 2px,
+            rgba(0, 0, 0, 0) 3px,
+            rgba(0, 0, 0, 0) 4px);
+    mix-blend-mode: soft-light;
+    opacity: 0.7;
+    z-index: 3;
+    animation: scan-flicker 6s infinite;
+}
+
+@keyframes scan-flicker {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 0.85;
+    }
+}
+
+/* BRILHO SUAVE EM VOLTA DA TELA */
+.screen-glow {
+    position: absolute;
+    width: 140vmin;
+    height: 140vmin;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 255, 136, 0.14), transparent 60%);
+    filter: blur(3vmin);
+    z-index: 0;
+}
+
+/* MOLDURA DO “GAME BOY / TELA” */
+.frame {
+    position: relative;
+    width: min(420px, 90vw);
+    height: min(280px, 60vh);
+    border-radius: 24px;
+    background: linear-gradient(135deg, #1d2336, #060a17);
+    padding: 10px;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.06),
+        0 20px 50px rgba(0, 0, 0, 0.85),
+        0 0 40px rgba(0, 255, 170, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    overflow: hidden;
+}
+
+/* BORDAS COM PSEUDO-ELEMENTOS (DETALHES DE CONSOLE ANTIGO) */
+.frame::before,
+.frame::after {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+}
+
+.frame::before {
+    border-top-color: rgba(255, 255, 255, 0.16);
+    border-left-color: rgba(255, 255, 255, 0.10);
+    border-right-color: rgba(0, 0, 0, 0.4);
+    border-bottom-color: rgba(0, 0, 0, 0.7);
+}
+
+.frame::after {
+    inset: 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.75);
+}
+
+/* INTERIOR DA TELA (FUNDO “GAME BOY COLOR”) */
+.frame-inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.12), transparent 40%),
+        radial-gradient(circle at 80% 90%, rgba(0, 255, 204, 0.18), transparent 55%),
+        repeating-linear-gradient(-45deg,
+            rgba(16, 32, 64, 0.90),
+            rgba(16, 32, 64, 0.90) 10px,
+            rgba(11, 21, 46, 0.98) 10px,
+            rgba(11, 21, 46, 0.98) 20px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    padding: 24px;
+}
+
+/* EFEITO DE GRAIN / TEXTURA SUAVE */
+.frame-inner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.13'/%3E%3C/svg%3E");
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+}
+
+/* “LOGO” RETRÔ */
+.logo {
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    font-size: 0.75rem;
+    color: #fefefe;
+    text-shadow:
+        0 0 4px rgba(0, 0, 0, 0.8),
+        0 0 16px rgba(0, 255, 136, 0.4);
+    animation: logo-pulse 2.8s ease-in-out infinite;
+}
+
+.logo-top {
+    display: block;
+    font-size: 1.5rem;
+    color: #fedf7b;
+    letter-spacing: 0.36em;
+}
+
+.logo-bottom {
+    display: block;
+    font-size: 1.8rem;
+    color: #52ffca;
+    letter-spacing: 0.26em;
+}
+
+@keyframes logo-pulse {
+
+    0%,
+    100% {
+        text-shadow:
+            0 0 4px rgba(0, 0, 0, 0.8),
+            0 0 12px rgba(0, 255, 136, 0.3);
+    }
+
+    50% {
+        text-shadow:
+            0 0 6px rgba(0, 0, 0, 1),
+            0 0 22px rgba(0, 255, 136, 0.7);
+    }
+}
+
+/* BOTÃO START GAME */
+.start-button {
+    position: relative;
+    padding: 14px 72px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(145deg, #ffdf72, #ffb347);
+    color: #201408;
+    text-transform: uppercase;
+    letter-spacing: 0.26em;
+    font-size: 0.76rem;
+    font-weight: 700;
+    outline: none;
+    box-shadow:
+        0 6px 0 #a76718,
+        0 12px 25px rgba(0, 0, 0, 0.7),
+        0 0 30px rgba(255, 215, 128, 0.4);
+    transform: translateY(0);
+    transition:
+        transform 0.16s ease-out,
+        box-shadow 0.16s ease-out,
+        filter 0.16s ease-out;
+    overflow: hidden;
+}
+
+/* BORDAS E BRILHOS DO BOTÃO COM PSEUDO-ELEMENTOS */
+.start-button::before,
+.start-button::after {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    border-radius: 999px;
+    pointer-events: none;
+}
+
+.start-button::before {
+    border-top: 1px solid rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid rgba(189, 102, 34, 0.7);
+    opacity: 0.9;
+}
+
+.start-button::after {
+    inset: auto;
+    top: 0;
+    left: -30%;
+    right: -30%;
+    height: 60%;
+    border-radius: 999px;
+    background: linear-gradient(to bottom,
+            rgba(255, 255, 255, 0.65),
+            rgba(255, 255, 255, 0.05));
+    opacity: 0.7;
+}
+
+/* EFEITO DE “ENERGIA” PASSANDO PELO BOTÃO */
+.start-button .start-text {
+    position: relative;
+    font-size: 1rem;
+    z-index: 1;
+    display: inline-block;
+    background: linear-gradient(90deg, #603911, #5b3410, #603911);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: #000;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.start-button::marker {
+    content: none;
+}
+
+/* BARRA DE ENERGIA ANIMADA */
+.start-button::before {
+    position: absolute;
+}
+
+.start-button::after {
+    position: absolute;
+}
+
+.start-button::after {
+    content: "";
+    top: 0;
+    left: -150%;
+    right: -150%;
+    height: 150%;
+    background: linear-gradient(120deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.85) 40%,
+            rgba(255, 255, 255, 0.0) 60%,
+            transparent 100%);
+    opacity: 0.0;
+    mix-blend-mode: screen;
+    transform: translateX(-30%);
+    animation: button-shine 3.5s ease-in-out infinite;
+}
+
+@keyframes button-shine {
+    0% {
+        opacity: 0;
+        transform: translateX(-60%);
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    45% {
+        opacity: 0;
+        transform: translateX(60%);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(60%);
+    }
+}
+
+/* HOVER E ACTIVE */
+.start-button:hover {
+    filter: brightness(1.05);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow:
+        0 8px 0 #8f5813,
+        0 16px 32px rgba(0, 0, 0, 0.85),
+        0 0 45px rgba(255, 243, 191, 0.7);
+}
+
+.start-button:active {
+    transform: translateY(2px) scale(0.99);
+    box-shadow:
+        0 3px 0 #6c3c0e,
+        0 6px 18px rgba(0, 0, 0, 0.9);
+}
+
+/* PEQUENO “TREMER” SUAVE DA TELA (COMO HARDWARE ANTIGO) */
+.frame-inner {
+    animation: subtle-shake 7s ease-in-out infinite;
+}
+
+@keyframes subtle-shake {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    25% {
+        transform: translate(0, 0.4px);
+    }
+
+    50% {
+        transform: translate(0.3px, -0.4px);
+    }
+
+    75% {
+        transform: translate(-0.4px, 0.2px);
+    }
+}
+
+/* RESPONSIVIDADE SIMPLES */
+@media (max-width: 480px) {
+    .frame {
+        width: 92vw;
+        height: 54vh;
+    }
+
+    .start-button {
+        padding: 12px 54px;
+        font-size: 0.72rem;
+    }
+
+    .logo-bottom {
+        font-size: 0.9rem;
+    }
+}
