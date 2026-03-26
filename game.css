@@ -8,8 +8,8 @@
 }
 
 :root {
-    --bg-sky-top: #f8f8f8;
-    --bg-sky-bottom: #e0e0e0;
+    --bg-sky-top: #e3f8fc;
+    --bg-sky-bottom: #c8f7ff;
     --bg-ground: #c8f0c0;
     --bg-ground-dark: #9bd08e;
     --border-ui: #000000;
@@ -65,8 +65,8 @@ body {
     background:
         linear-gradient(to bottom,
             var(--bg-sky-top) 0%,
-            var(--bg-sky-bottom) 40%,
-            var(--bg-ground) 40%,
+            var(--bg-sky-bottom) 30%,
+            var(--bg-ground) 30%,
             var(--bg-ground-dark) 100%);
     z-index: 0;
 }
@@ -490,13 +490,17 @@ body {
     }
 
     .enemy-status {
-        top: 15%;
+        top: 18%;
     }
 
     .turn-indicator {
         top: 90%;
-        right: 67%;
+        right: 67.35%;
         width: 6.5rem;
+    }
+
+    .turn-indicator::before {
+        height: 5px;
     }
 
     .battle-log {
